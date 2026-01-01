@@ -3,8 +3,10 @@
 ## Infra & Setup
 - [x] Repo GitHub créé
 - [x] Repo cloné en local sur C:\ESILV\A4\Linux,git,python\Projet
-- [ ] Structure des dossiers créée
-- [ ] Requirements.txt créé
+- [x] Structure des dossiers créée
+- [x] Requirements.txt créé
+
 
 ## Tâches en cours
-- Mise en place de l'architecture (Step 0 & 1 du plan)
+- [x] Test du module de récupération de données (Sanity Check OK - BTC Data received)
+- [ ] Implémentation des stratégies (Buy & Hold, Moyennes Mobiles)
