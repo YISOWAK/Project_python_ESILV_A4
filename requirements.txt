@@ -5,4 +5,3 @@ yfinance
 plotly
 requests
 schedule
-ta-lib-binary  # Version facile à installer de TA-Lib pour les indicateurs techniques
