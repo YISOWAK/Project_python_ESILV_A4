@@ -25,6 +25,16 @@ if time_since_last_run > 300: # 300 secondes = 5 min
 @st.cache_data(ttl=300) # Cache les données pour 5 min
 def get_data(symbol="BTC-USD", period="1mo", interval="1h"):
     data = yf.download(symbol, period=period, interval=interval)
+    
+    # --- FIX CRITIQUE POUR YFINANCE ---
+    # Si les colonnes sont complexes (ex: ('Close', 'BTC-USD')), on les aplatit
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.get_level_values(0)
+    
+    # On s'assure que l'index est bien au format Date
+    data.index = pd.to_datetime(data.index)
+    # ----------------------------------
+    
     return data
 
 def get_latest_report():
