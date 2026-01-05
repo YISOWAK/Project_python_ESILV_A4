@@ -86,17 +86,43 @@ def afficher_dashboard_live():
             st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
-        st.header("📑 Dernier Rapport d'Analyse")
+        st.header("🕵️ Debugging du Rapport")
         
-        if st.button("🔄 Forcer la génération (Test)"):
-            # On utilise le chemin relatif car on lance la commande depuis la racine repo
-            os.system("./venv/bin/python daily_report.py")
-            st.toast("Génération lancée...")
-            time.sleep(1)
-            st.rerun()
-
-        report_content = get_latest_report()
-        st.text_area("Lecture du fichier :", report_content, height=400)
+        # 1. Où sommes-nous ?
+        current_dir = os.getcwd()
+        st.write(f"📂 **Dossier de travail actuel (CWD) :** `{current_dir}`")
+        
+        # 2. Où cherchons-nous les rapports ?
+        # On reconstruit le chemin
+        base_dir = os.path.dirname(os.path.abspath(__file__)) # Dossier app/
+        repo_dir = os.path.dirname(base_dir) # Dossier repo/
+        reports_dir = os.path.join(repo_dir, 'reports')
+        
+        st.write(f"📍 **Chemin ciblé pour les rapports :** `{reports_dir}`")
+        
+        # 3. Le dossier existe-t-il ?
+        if os.path.exists(reports_dir):
+            st.success("✅ Le dossier 'reports' EXISTE bien à cet endroit !")
+            
+            # 4. Qu'il y a-t-il dedans ?
+            fichiers = os.listdir(reports_dir)
+            st.write("📄 **Fichiers trouvés dans le dossier :**")
+            st.write(fichiers)
+            
+            # 5. Tentative de lecture du dernier fichier
+            txt_files = glob.glob(os.path.join(reports_dir, '*.txt'))
+            if txt_files:
+                latest_file = max(txt_files, key=os.path.getctime)
+                st.info(f"Lecture du fichier : {latest_file}")
+                with open(latest_file, 'r') as f:
+                    st.code(f.read())
+            else:
+                st.error("❌ Le dossier est vide ou ne contient pas de .txt")
+        else:
+            st.error("❌ Le dossier 'reports' est INTROUVABLE à cet endroit.")
+            st.warning("Essayons de voir ce qu'il y a dans le dossier repo/ :")
+            if os.path.exists(repo_dir):
+                st.write(os.listdir(repo_dir))
 
     with tab3:
         st.success("Système Opérationnel")
