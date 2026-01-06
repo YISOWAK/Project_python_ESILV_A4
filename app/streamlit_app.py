@@ -1,7 +1,6 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
-import time
 import glob
 import os
 import plotly.graph_objects as go
@@ -9,7 +8,7 @@ from datetime import datetime
 import pytz 
 
 # --- CONFIGURATION ---
-st.set_page_config(layout="wide", page_title="Accueil Quant-A", page_icon="⚡")
+st.set_page_config(layout="wide", page_title="Quant A", page_icon="💎")
 
 # --- FONCTIONS UTILITAIRES ---
 def get_paris_time():
@@ -52,21 +51,21 @@ def get_latest_report():
         return f"⚠️ Erreur lecture : {e}"
 
 # --- INTERFACE LIVE (Fragment) ---
-# On passe les paramètres (symbol, etc.) comme arguments à la fonction
 @st.fragment(run_every=300)
 def afficher_dashboard_live(symbol, period, interval):
     
     # Header & Chrono
     c1, c2 = st.columns([3, 1])
     with c1:
-        st.title(f"⚡ Terminal Financier : {symbol.split('-')[0]}")
+        # Titre renommé selon ta demande
+        st.title(f"Quant A : {symbol.split('-')[0]}")
         st.caption("Live Market Data | Auto-Refresh activé (5 min)")
 
     with c2:
         st.metric(label="Dernière synchro (Paris)", value=get_paris_time())
 
-    # Onglets
-    tab1, tab2, tab3 = st.tabs(["📈 Marché (Live)", "📝 Dernier Rapport IA", "ℹ️ Système"])
+    # Onglets (Le premier s'appelle maintenant "Quant A")
+    tab1, tab2, tab3 = st.tabs(["💎 Quant A", "📝 Dernier Rapport IA", "ℹ️ Système"])
 
     with tab1:
         df = get_data(symbol, period, interval)
@@ -82,14 +81,14 @@ def afficher_dashboard_live(symbol, period, interval):
             col2.metric("Haut", f"${df['High'].max().item():,.2f}")
             col3.metric("Bas", f"${df['Low'].min().item():,.2f}")
 
-            st.subheader(f"Graphique ({interval})")
+            st.subheader(f"Analyse Technique ({interval})")
             fig = go.Figure(data=[go.Candlestick(
                 x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close']
             )])
             fig.update_layout(height=500, margin=dict(l=0, r=0, t=30, b=0), xaxis_rangeslider_visible=True)
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.warning("Données non disponibles pour ce ticker.")
+            st.warning("Données non disponibles.")
 
     with tab2:
         st.header("Synthèse Stratégique")
@@ -100,10 +99,11 @@ def afficher_dashboard_live(symbol, period, interval):
 
 # --- LANCEMENT ---
 if __name__ == "__main__":
-    # 1. SIDEBAR (À l'extérieur du fragment !)
+    # Sidebar
     st.sidebar.header("Configuration")
     
-    CRYPTO_LIST = ["BTC-USD", "ETH-USD", "SOL-USD", "AVAX-USD", "DOGE-USD"]
+    # LISTE MODIFIÉE (Seulement les 3 majeurs)
+    CRYPTO_LIST = ["BTC-USD", "ETH-USD", "SOL-USD"]
     sel_symbol = st.sidebar.selectbox("Actif Crypto", CRYPTO_LIST, index=0)
 
     c1_s, c2_s = st.sidebar.columns(2)
@@ -114,6 +114,5 @@ if __name__ == "__main__":
     
     st.sidebar.markdown("---")
 
-    # 2. APPEL DU FRAGMENT
-    # On lui envoie les choix de l'utilisateur
+    # Appel du fragment
     afficher_dashboard_live(sel_symbol, sel_period, sel_interval)
