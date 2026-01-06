@@ -8,7 +8,6 @@ from datetime import datetime
 import pytz 
 
 # --- CONFIGURATION ---
-# "Comme avant" : On remet un nom d'accueil générique
 st.set_page_config(layout="wide", page_title="Accueil Dashboard", page_icon="📊")
 
 # --- FONCTIONS UTILITAIRES ---
@@ -55,7 +54,7 @@ def get_latest_report():
 @st.fragment(run_every=300)
 def afficher_dashboard_live(symbol, period, interval):
     
-    # Header & Chrono ("Comme avant")
+    # Header & Chrono
     c1, c2 = st.columns([3, 1])
     with c1:
         st.title(f"⚡ Terminal Financier : {symbol.split('-')[0]}")
@@ -64,11 +63,10 @@ def afficher_dashboard_live(symbol, period, interval):
     with c2:
         st.metric(label="Dernière synchro (Paris)", value=get_paris_time())
 
-    # --- C'EST ICI LE CHANGEMENT ---
-    # L'onglet "Single Asset" devient "Quant A"
-    tab1, tab2, tab3 = st.tabs(["💎 Quant A", "📝 Rapports Journaliers", "ℹ️ Système"])
+    # Onglets
+    tab1, tab2, tab3 = st.tabs(["Dashboard", "📝 Rapports Journaliers", "ℹ️ Système"])
 
-    # Contenu de l'onglet Quant A (Le Graphique + Prix)
+    # Contenu de l'onglet Dashboard
     with tab1:
         df = get_data(symbol, period, interval)
 
@@ -104,7 +102,7 @@ def afficher_dashboard_live(symbol, period, interval):
 if __name__ == "__main__":
     st.sidebar.header("Configuration")
     
-    # LISTE NETTOYÉE (Seulement BTC, ETH, SOL)
+    # 1. LISTE PROPRE (Seulement BTC, ETH, SOL)
     CRYPTO_LIST = ["BTC-USD", "ETH-USD", "SOL-USD"]
     sel_symbol = st.sidebar.selectbox("Actif Crypto", CRYPTO_LIST, index=0)
 
@@ -112,7 +110,8 @@ if __name__ == "__main__":
     with c1_s:
         sel_period = st.selectbox("Période", ["1d", "5d", "1mo", "6mo", "1y"], index=2)
     with c2_s:
-        sel_interval = st.selectbox("Intervalle", ["15m", "30m", "1h", "4h", "1d"], index=2)
+        # 2. INTERVALLES NETTOYÉS (On commence à 1h)
+        sel_interval = st.selectbox("Intervalle", ["1h", "4h", "1d"], index=0)
     
     st.sidebar.markdown("---")
 
