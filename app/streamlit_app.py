@@ -8,7 +8,8 @@ from datetime import datetime
 import pytz 
 
 # --- CONFIGURATION ---
-st.set_page_config(layout="wide", page_title="Quant A", page_icon="💎")
+# "Comme avant" : On remet un nom d'accueil générique
+st.set_page_config(layout="wide", page_title="Accueil Dashboard", page_icon="📊")
 
 # --- FONCTIONS UTILITAIRES ---
 def get_paris_time():
@@ -54,19 +55,20 @@ def get_latest_report():
 @st.fragment(run_every=300)
 def afficher_dashboard_live(symbol, period, interval):
     
-    # Header & Chrono
+    # Header & Chrono ("Comme avant")
     c1, c2 = st.columns([3, 1])
     with c1:
-        # Titre renommé selon ta demande
-        st.title(f"Quant A : {symbol.split('-')[0]}")
+        st.title(f"⚡ Terminal Financier : {symbol.split('-')[0]}")
         st.caption("Live Market Data | Auto-Refresh activé (5 min)")
 
     with c2:
         st.metric(label="Dernière synchro (Paris)", value=get_paris_time())
 
-    # Onglets (Le premier s'appelle maintenant "Quant A")
-    tab1, tab2, tab3 = st.tabs(["💎 Quant A", "📝 Dernier Rapport IA", "ℹ️ Système"])
+    # --- C'EST ICI LE CHANGEMENT ---
+    # L'onglet "Single Asset" devient "Quant A"
+    tab1, tab2, tab3 = st.tabs(["💎 Quant A", "📝 Rapports Journaliers", "ℹ️ Système"])
 
+    # Contenu de l'onglet Quant A (Le Graphique + Prix)
     with tab1:
         df = get_data(symbol, period, interval)
 
@@ -90,6 +92,7 @@ def afficher_dashboard_live(symbol, period, interval):
         else:
             st.warning("Données non disponibles.")
 
+    # Contenu de l'onglet Rapports
     with tab2:
         st.header("Synthèse Stratégique")
         st.text(get_latest_report())
@@ -99,10 +102,9 @@ def afficher_dashboard_live(symbol, period, interval):
 
 # --- LANCEMENT ---
 if __name__ == "__main__":
-    # Sidebar
     st.sidebar.header("Configuration")
     
-    # LISTE MODIFIÉE (Seulement les 3 majeurs)
+    # LISTE NETTOYÉE (Seulement BTC, ETH, SOL)
     CRYPTO_LIST = ["BTC-USD", "ETH-USD", "SOL-USD"]
     sel_symbol = st.sidebar.selectbox("Actif Crypto", CRYPTO_LIST, index=0)
 
@@ -114,5 +116,4 @@ if __name__ == "__main__":
     
     st.sidebar.markdown("---")
 
-    # Appel du fragment
     afficher_dashboard_live(sel_symbol, sel_period, sel_interval)
