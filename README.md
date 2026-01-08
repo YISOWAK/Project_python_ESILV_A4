@@ -11,12 +11,12 @@ Online quantitative dashboard built for an Asset Management workflow:
 ---
 
 ## Features (Core requirements)
-✅ Dynamic market data retrieval (Yahoo Finance via `yfinance`)  
-✅ Interactive Streamlit dashboard (single asset + portfolio)  
-✅ Auto-refresh every **5 minutes** (data cache TTL = 300s)  
-✅ Main charts include raw prices + strategy/portfolio equity curves  
-✅ Daily risk report generated at fixed time (cron) and stored on the VM  
-✅ Codebase structured, modular, and collaborative through GitHub branches & Pull Requests  
+* **Dynamic Data:** Real-time market data retrieval (Yahoo Finance via `yfinance`) [updates every 5 min].
+* **Interactive Dashboard:** Single asset analysis + Portfolio simulation.
+* **Algorithmic Strategies:** Implementation of Buy & Hold and MA Crossover.
+* **Bonus ML:** Linear Regression model to predict short-term price trends.
+* ** robust Architecture:** Auto-refresh logic (TTL caching) and error handling.
+* **Automated Reporting:** Daily risk report generated via **Cron** and stored on the VM.
 
 ---
 
@@ -25,24 +25,14 @@ Online quantitative dashboard built for an Asset Management workflow:
 ## Repository Structure
 
 ```text
-app/
-  streamlit_app.py              # Main Streamlit entrypoint
-  pages/
-    1_Single_Asset.py           # Quant A module
-    2_Portfolio.py              # Quant B module
-  core/
-    config.py                   # Assets list + settings
-    data.py                     # Data retrieval layer
-    strategies.py               # Quant A strategies
-    portfolio.py                # Quant B portfolio simulation
-    metrics.py                  # Shared risk/performance metrics
-daily_report.py                 # Daily report script (cron)
-reports/                        # Generated reports on VM (not versioned)
-docs/
-  devlog.md                     # Optional documentation
-requirements.txt
+├── app/
+│   ├── streamlit_app.py    # Point d'entrée principal
+│   ├── pages/              # Modules Quant A et Quant B
+│   └── core/               # Logique métier (Data, Calculs, ML)
+├── scripts/                # Scripts d'automatisation (Cron)
+├── infra/                  # Fichiers de configuration serveur
+└── requirements.txt        # Dépendances Python 
 ```
-
 
 ## Installation (local)
 From the repository root:
