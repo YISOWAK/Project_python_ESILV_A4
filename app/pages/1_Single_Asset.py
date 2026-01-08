@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 from app.core.data import get_historical_data
 from app.core.config import ASSETS
 from app.core.strategies import calculate_buy_and_hold, calculate_ma_crossover
-
+from app.core.predictions import predict_linear_regression
 st.set_page_config(page_title="Single Asset Strat", layout="wide")
 st.title("🧠 Analyse Stratégique (Quant A)")
 
@@ -57,7 +57,7 @@ with st.spinner("Calcul en cours..."):
         fig.add_trace(go.Scatter(
             x=df.index, y=df['Close'], 
             name="Prix Actif", 
-            line=dict(color='gray', width=1),
+            line=dict(color='white', width=1),
             yaxis='y1'
         ))
         
@@ -65,7 +65,7 @@ with st.spinner("Calcul en cours..."):
         fig.add_trace(go.Scatter(
             x=df.index, y=df_strat['Strategy_Equity'], 
             name=f"Stratégie {strat_name}",
-            line=dict(color='blue', width=2),
+            line=dict(color='#2E91E5', width=2),
             yaxis='y2'
         ))
 
@@ -85,3 +85,40 @@ with st.spinner("Calcul en cours..."):
 
     else:
         st.error("Pas de données.")
+
+    with st.expander("🔮 Bonus : Prédiction ML (Tendance future)", expanded=False):
+        st.write("Modèle : Régression Linéaire simple sur l'historique chargé.")
+        
+        try:
+            # APPEL DE LA FONCTION DÉLOCALISÉE (Backend)
+            f_dates, f_prices, trend = predict_linear_regression(df, days_ahead=5)
+            
+            # Affichage résultat (Frontend)
+            col_pred1, col_pred2 = st.columns([1, 3])
+            with col_pred1:
+                st.info(f"Prédiction J+5 : **${f_prices[-1]:,.2f}**")
+                st.metric("Tendance détectée", trend)
+                
+            with col_pred2:
+                # Petit graph rapide
+                fig_pred = go.Figure()
+                # Historique récent (30 derniers points)
+                fig_pred.add_trace(go.Scatter(
+                    x=df.index[-30:], y=df['Close'].tail(30), 
+                    name="Historique", line=dict(color='#B0B0B0')
+                ))
+                # Futur
+                fig_pred.add_trace(go.Scatter(
+                    x=f_dates, y=f_prices, 
+                    name="Prédiction ML", line=dict(color='yellow', dash='dot')
+                ))
+                fig_pred.update_layout(
+                    height=300, 
+                    margin=dict(t=0, b=0, l=0, r=0),
+                    showlegend=True
+                )
+                st.plotly_chart(fig_pred, use_container_width=True)
+                
+        except Exception as e:
+            st.error(f"Erreur lors de la prédiction : {e}")
+        

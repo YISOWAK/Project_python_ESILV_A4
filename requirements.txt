@@ -5,3 +5,4 @@ yfinance
 plotly
 requests
 schedule
+scikit-learn
